@@ -1,0 +1,59 @@
+const URL = "https://jsonplaceholder.typicode.com/users"
+
+const lista = document.querySelector('#lista')
+const carregar = document.querySelector('#load')
+const filtrar = document.querySelector('#filter')
+const fechar = document.querySelector('#close')
+const buscar = document.querySelector('#search')
+
+let filtrado = false
+let usuarios = []
+
+function renderUsers(users) {
+    lista.innerHTML = '';
+    users.forEach(({ name }) => {
+        const li = document.createElement('li');
+        li.innerText = name
+        lista.appendChild(li);
+    })
+    
+}
+
+async function getUsers() {
+    const res = await fetch(URL)
+    const data = await res.json()
+    usuarios = data
+    renderUsers(usuarios);
+}
+
+//botões
+carregar.addEventListener('click', getUsers);
+
+fechar.addEventListener('click', () => {
+    lista.innerHTML = '';
+});
+
+filtrar.addEventListener('click', () => {
+    if (usuarios.length === 0) {
+        console.log("Carrega dados primeiro");
+        return
+    }
+
+    if (!filtrado) {
+        //se filtrado é falso então tá com todos usuarios
+        const filtrados = usuarios.filter(user => user.id > 5)
+        renderUsers(filtrados); //filtra ususarios
+        filtrado = true;
+        filtrar.innerText = 'Mostrar todos'
+        //vira um botão para mostrar tudo
+    } else {
+        renderUsers(usuarios);
+        filtrado = false;
+        filtrar.innerText = 'Filtrar ID > 5'
+        //Vira um botão para filtrar
+    }
+})
+
+const buscando = usuarios.filter(user =>
+    user.name.toLowerCase().includes('glenna')
+)
