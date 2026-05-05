@@ -6,6 +6,9 @@ const filtrar = document.querySelector('#filter')
 const fechar = document.querySelector('#close')
 const buscar = document.querySelector('#search')
 
+
+const status = document.querySelector('#status')
+
 let filtrado = false
 let usuarios = []
 
@@ -16,17 +19,46 @@ function renderUsers(users) {
         li.innerText = name
         lista.appendChild(li);
     })
-    
+
 }
 
 async function getUsers() {
-    const res = await fetch(URL)
-    const data = await res.json()
-    usuarios = data
-    renderUsers(usuarios);
+    try {
+        status.innerHTML = "Carregando..."
+        const res = await fetch(URL)
+        const data = await res.json()
+        usuarios = data
+        renderUsers(usuarios);
+        status.innerHTML = '';
+
+    } catch {
+        status.innerHTML = "Erro na busca"
+    }
+    // finally {
+    //     status.innerHTML = ''
+    // }
 }
 
 //botões
+buscar.addEventListener('input', () => {
+    const texto = buscar.value.trim()//trim pra n contar espaço
+    if (texto.length === 0) {
+        renderUsers(usuarios)
+        status.innerHTML = '';
+    } else {
+        const filtrado = usuarios.filter((objeto) => {
+            return objeto.name.toLowerCase().includes(texto.toLowerCase())
+        })
+        if (filtrado.length === 0) {
+            status.innerHTML = "Nenhum usuario encontrado"
+            lista.innerHTML = '';
+        } else {
+            renderUsers(filtrado)
+            status.innerHTML = ''
+        }
+    }
+})
+
 carregar.addEventListener('click', getUsers);
 
 fechar.addEventListener('click', () => {
@@ -54,6 +86,3 @@ filtrar.addEventListener('click', () => {
     }
 })
 
-const buscando = usuarios.filter(user =>
-    user.name.toLowerCase().includes('glenna')
-)
