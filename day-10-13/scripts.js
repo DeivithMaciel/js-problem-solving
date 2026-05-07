@@ -49,12 +49,14 @@ buscar.addEventListener('input', () => {
         const filtrado = usuarios.filter((objeto) => {
             return objeto.name.toLowerCase().includes(texto.toLowerCase())
         })
-        if (filtrado.length === 0) {
-            status.innerHTML = "Nenhum usuario encontrado"
+        if (texto.length < 2) {
+            lista.innerHTML = "Digite pelo menos 2 letras"
+        } else if (filtrado.length === 0) {
+            status.innerHTML = "Nenhum usuario encontrado para: " + texto
             lista.innerHTML = '';
         } else {
             renderUsers(filtrado)
-            status.innerHTML = ''
+            status.innerHTML = filtrado.length + " Usuario(s) encontrados"
         }
     }
 })
