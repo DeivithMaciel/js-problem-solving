@@ -12,60 +12,79 @@ const status = document.querySelector('#status')
 let filtrado = false
 let usuarios = []
 
+function mostrarStatus(frase) {
+    status.innerHTML = frase
+}
+
+function limparStatus() {
+    status.innerHTML = ''
+}
+
+function limparLista() {
+    lista.innerHTML = ''
+}
+
+
 function renderUsers(users) {
-    lista.innerHTML = '';
+    limparLista();
     users.forEach(({ name }) => {
         const li = document.createElement('li');
         li.innerText = name
         lista.appendChild(li);
     })
-
 }
 
 async function getUsers() {
     try {
-        status.innerHTML = "Carregando..."
-        const res = await fetch(URL)
-        const data = await res.json()
-        usuarios = data
-        renderUsers(usuarios);
-        status.innerHTML = '';
+        mostrarStatus('Carregando...')
+        setTimeout(async () => {
+            const res = await fetch(URL)
+            const data = await res.json()
+            usuarios = data
+            renderUsers(usuarios);
+            limparStatus()
+        }, 1000)
 
     } catch {
-        status.innerHTML = "Erro na busca"
+        mostrarStatus('Erro na busca')
     }
     // finally {
     //     status.innerHTML = ''
     // }
 }
 
-//botões
-buscar.addEventListener('input', () => {
+function filtrarUsuarios(texto) {
+    return usuarios.filter((objeto) => {
+        return objeto.name.toLowerCase().includes(texto.toLowerCase())
+    })
+}
+
+function buscaCompleta() {
     const texto = buscar.value.trim()//trim pra n contar espaço
+    const filtrado = filtrarUsuarios(texto)
     if (texto.length === 0) {
         renderUsers(usuarios)
-        status.innerHTML = '';
+        limparStatus()
     } else {
-        const filtrado = usuarios.filter((objeto) => {
-            return objeto.name.toLowerCase().includes(texto.toLowerCase())
-        })
         if (texto.length < 2) {
-            lista.innerHTML = "Digite pelo menos 2 letras"
+            mostrarStatus("Digite pelo menos 2 letras")
+            limparLista();
         } else if (filtrado.length === 0) {
-            status.innerHTML = "Nenhum usuario encontrado para: " + texto
-            lista.innerHTML = '';
+            mostrarStatus("Nenhum usuario encontrado para: " + texto)
+            limparLista();
         } else {
             renderUsers(filtrado)
-            status.innerHTML = filtrado.length + " Usuario(s) encontrados"
+            mostrarStatus(filtrado.length + " Usuario(s) encontrados")
         }
     }
-})
+}
+
+//botões
+buscar.addEventListener('input', buscaCompleta)
 
 carregar.addEventListener('click', getUsers);
 
-fechar.addEventListener('click', () => {
-    lista.innerHTML = '';
-});
+fechar.addEventListener('click', limparLista);
 
 filtrar.addEventListener('click', () => {
     if (usuarios.length === 0) {
@@ -75,7 +94,7 @@ filtrar.addEventListener('click', () => {
 
     if (!filtrado) {
         //se filtrado é falso então tá com todos usuarios
-        const filtrados = usuarios.filter(user => user.id > 5)
+        const filtrados = filtrarUsuarios(texto)
         renderUsers(filtrados); //filtra ususarios
         filtrado = true;
         filtrar.innerText = 'Mostrar todos'
@@ -87,4 +106,3 @@ filtrar.addEventListener('click', () => {
         //Vira um botão para filtrar
     }
 })
-
