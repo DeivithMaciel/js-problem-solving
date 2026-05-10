@@ -13,6 +13,7 @@ const filtrar = document.querySelector('#filter')
 const fechar = document.querySelector('#close')
 const adicionar = document.querySelector('#addUser')
 const remover = document.querySelector('#remove')
+const alterar = document.querySelector('#change')
 
 let filtrado = false
 let usuarios = []
@@ -118,10 +119,26 @@ function addName() {
     }
 }
 
+function alterarUsuario() {
+    limparStatus();
+    const selecionado = nome.value.trim()
+    const alvo = usuarios.find(user => user.name.toLowerCase() === selecionado.toLowerCase())
+    if (!alvo) {
+        mostrarStatus("Usuario não encontrado")
+    } else {
+        mostrarStatus(`O nome de usuario: ${alvo.name} foi editado`);
+        alvo.name = `${alvo.name} Editado`
+        renderTotal(usuarios);
+        renderUsers(usuarios);
+    }
+}
+
 //botões/inputs
 buscar.addEventListener('input', buscaCompleta);
 
 carregar.addEventListener('click', getUsers);
+
+alterar.addEventListener('click', alterarUsuario);
 
 fechar.addEventListener('click', limparLista);
 
