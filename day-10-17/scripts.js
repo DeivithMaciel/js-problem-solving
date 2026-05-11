@@ -44,9 +44,9 @@ function renderTotal(users) {
 
 function renderUsers(users) {
     limparLista();
-    users.forEach(({ name }) => {
+    users.forEach(({ id, name }) => {
         const li = document.createElement('li');
-        li.innerText = name
+        li.innerText = `ID: ${id} - ${name}`
         lista.appendChild(li);
     })
 }
@@ -65,13 +65,6 @@ async function getUsers() {
     } catch {
         mostrarStatus('Erro na busca')
     }
-}
-
-
-function removerUltimo() {
-    usuarios.pop()
-    renderUsers(usuarios)
-    renderTotal(usuarios)
 }
 
 function filtrarUsuarios(texto) {
@@ -102,7 +95,7 @@ function buscaCompleta() {
 
 function addName() {
     const novoUsuario = nome.value.trim();
-    const usuario = { name: novoUsuario }
+    const usuario = {id: usuarios.length + 1, name: novoUsuario }
     const existir = usuarios.some(user => user.name === usuario.name)
 
     if (novoUsuario === '') {
@@ -133,6 +126,21 @@ function alterarUsuario() {
     }
 }
 
+function removerUsuario() {
+    const selecionado = nome.value.trim()
+    const filtragem = usuarios.filter(user => user.name.toLowerCase() != selecionado.toLowerCase())
+    if (filtragem.length === usuarios.length) {
+        mostrarStatus('Usuario não encontrado')
+        nome.value = ''
+    } else {
+        usuarios = filtragem
+        mostrarStatus(`Usuario '${selecionado}' removido`)
+        renderUsers(usuarios);
+        renderTotal(usuarios);
+        nome.value = ''
+    }
+}
+
 //botões/inputs
 buscar.addEventListener('input', buscaCompleta);
 
@@ -144,7 +152,7 @@ fechar.addEventListener('click', limparLista);
 
 adicionar.addEventListener('click', addName);
 
-remover.addEventListener('click', removerUltimo);
+remover.addEventListener('click', removerUsuario);
 
 
 // filtrar.addEventListener('click', () => {
