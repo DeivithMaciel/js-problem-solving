@@ -1,22 +1,36 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="styles.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="styles.css" />
     <title>crud com cards</title>
-</head>
-<body>
-    <ul id="status"></ul>
-    <ul id="total"></ul>
+  </head>
+  <body>
+    <div class="hero">
+      <div>
+        <ul id="status"></ul>
+        <ul id="total"></ul>
 
-    <input id="search" placeholder="Busca">
-    <button id="buttonAdult">adultos</button>
-    <button id="buttonAlfabetizado">AZ</button>
-    <button id="reset">Resetar</button>
+        <input id="search" placeholder="Busca" />
+        <button id="buttonAdult">Só adultos</button>
+        <button id="buttonAlfabetizado">AZ</button>
+        <button id="disponiveis">Só disponiveis</button>
+        <button id="reset">Resetar</button>
+      </div>
+      <div>
+        <form class="form">
+            <input id="nome" type="text" placeholder="nome">
+            <input id="anos" type="number" placeholder="idade">
+            <input id="cargo" type="text" placeholder="cargo">
+            <input id="cidade" type="text" placeholder="cidade">
+            <button id="buttonAdd" type="button">Adicionar</button>
+        </form>
+      </div>
+    </div>
 
     <ul id="cardList"></ul>
 
     <script src="scripts.js"></script>
-</body>
+  </body>
 </html>

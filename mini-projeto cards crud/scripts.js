@@ -50,11 +50,19 @@ const search = document.querySelector('#search');
 const buttonAdult = document.querySelector('#buttonAdult');
 const buttonAlfabetizado = document.querySelector('#buttonAlfabetizado');
 const buttonReset = document.querySelector('#reset');
+const buttonDisponiveis= document.querySelector('#disponiveis');
+
+const nome = document.querySelector('#nome');
+const anos = document.querySelector('#anos');
+const cargo = document.querySelector('#cargo');
+const cidade = document.querySelector('#cidade');
+const buttonAdd = document.querySelector('#buttonAdd');
 
 const state = {
     busca: '',
     adultos: false,
-    ordemAZ: true
+    ordemAZ: true,
+    disponiveis: false
 }
 
 
@@ -66,16 +74,18 @@ function renderCards(user) {
             <a>${user.idade} anos</a>
             <h4>${user.cargo}</h4>
             <h4>${user.cidade}</h4>
-            <p>Disponivel:❌</p>
+            <p>Disponivel:❌</p><button onclick='toggleActive(${user.id})'>Ativar/Desativar</button>
+            <button onclick='removeUser(${user.id})'>Remover</button>
             </li>`
     } else {
         return `
             <li class='cardItem'>
             <h2>${user.name}</h2>
             <a>${user.idade} anos</a>
-            <p>${user.cargo}</p>
-            <p>${user.cidade}</p>
-            <p>Disponivel:✅</p>
+            <h4>${user.cargo}</h4>
+            <h4>${user.cidade}</h4>
+            <p>Disponivel:✅</p><button onclick='toggleActive(${user.id})'>Ativar/Desativar</button>
+            <button onclick='removeUser(${user.id})'>Remover</button>
             </li>`
     }
 }
@@ -85,6 +95,7 @@ function statusUpdate() {
     let buscaString = '❌';
     let alfabeticoString = '❌';
     let adultoString = '❌';
+    let disponiveisString = '❌';
     if (state.busca) {
         buscaString = '✅'
     }
@@ -94,12 +105,22 @@ function statusUpdate() {
     if (state.adultos) {
         adultoString = '✅'
     }
+    if (state.disponiveis) {
+        disponiveisString = '✅'
+    }
     status.innerHTML = `
-    <li class='statusList'>
-    <p>busca:${buscaString}</p>
-    <p>Ordem alfabética:${alfabeticoString}</p>
-    <p>adulto:${adultoString}</p>
-    </li>`
+    <ul class='statusList'>
+    <li>Busca:${buscaString}</li>
+    <li>Ordem alfabética:${alfabeticoString}</li>
+    <li>Adultos:${adultoString}</li>
+    <li>Disponiveis:${disponiveisString}</li>
+    </ul>`
+}
+
+function toggleActive(id) {
+    const usuario = usuarios.find((user) => user.id === id)
+    usuario.ativo = !usuario.ativo
+    renderList()
 }
 
 function toggleAdults(users) {
@@ -110,9 +131,9 @@ function toggleAdults(users) {
 }
 
 function togglesearch(users) {
-    state.busca = search.value.trim()
+    const searched = search.value.trim()
     users = users.filter(({ name }) => {
-        return name.toLowerCase().includes(state.busca.toLowerCase())
+        return name.toLowerCase().includes(searched.toLowerCase())
     })
     return users
 }
@@ -126,6 +147,13 @@ function toggleAlfabetico(users) {
     return users
 }
 
+function toggleDisponiveis(users) {
+    if (state.disponiveis === true) {
+        users = users.filter(({ativo}) => ativo === true)
+    }
+    return users
+}
+
 function renderList() {
     total.innerHTML = ''
     cardList.innerHTML = ''
@@ -133,6 +161,7 @@ function renderList() {
     
     resultado = toggleAlfabetico(resultado)
     resultado = toggleAdults(resultado)
+    resultado = toggleDisponiveis(resultado)
     resultado = togglesearch(resultado)
     
     if (resultado.length === 0) {
@@ -146,8 +175,30 @@ function renderList() {
 }
 renderList()
 
+function addUser() {
+    const newUser = {
+        id: usuarios.length + 1,
+        name: nome.value.trim(),
+        idade: anos.value,
+        cargo: cargo.value.trim(),
+        cidade: cidade.value.trim(),
+        ativo: false
+    }
+    if (newUser.name.length === 0 | newUser.idade.length === 0 | newUser.cargo.length === 0 | newUser.cidade.length === 0) {
+        alert('Preencha todos os campos')
+    }  else {
+        usuarios.push(newUser)
+        renderList()
+    }
+}
+
+function removeUser(id) {
+    usuarios = usuarios.filter((user) => user.id != id)
+    renderList()
+}
+
 search.addEventListener('input', () => {
-    if (state.busca.length === 0) {
+    if (search.value.length === 0) {
         state.busca = false
     } else {
         state.busca = true
@@ -170,7 +221,7 @@ buttonAlfabetizado.addEventListener('click', () => {
 buttonAdult.addEventListener('click', () => {
     state.adultos = !state.adultos
     if (state.adultos) {
-        buttonAdult.innerHTML = 'Remover filtro'
+        buttonAdult.innerHTML = 'Remover filtro adultos'
     } else {
         buttonAdult.innerHTML = 'Filtrar adultos'
     }
@@ -183,5 +234,19 @@ buttonReset.addEventListener('click', () => {
     search.value = ''
     state.busca = false
     state.adultos = false
+    state.disponiveis = false
+    renderList()
+})
+
+buttonAdd.addEventListener('click', addUser)
+
+buttonDisponiveis.addEventListener('click', () => {
+    state.disponiveis = !state.disponiveis
+    if (state.disponiveis) {
+        buttonDisponiveis.innerHTML = 'Desativar só ativos'
+    } else {
+        buttonDisponiveis.innerHTML = 'Ativar só ativos'
+    }
+    statusUpdate()
     renderList()
 })
