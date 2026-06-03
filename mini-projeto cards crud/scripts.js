@@ -49,6 +49,13 @@ const search = document.querySelector('#search');
 
 const buttonAdult = document.querySelector('#buttonAdult');
 const buttonAlfabetizado = document.querySelector('#buttonAlfabetizado');
+const buttonReset = document.querySelector('#reset');
+
+const state = {
+    busca: '',
+    adultos: false,
+    ordemAZ: true
+}
 
 
 function renderCards(user) {
@@ -73,23 +80,18 @@ function renderCards(user) {
     }
 }
 
-let busca = false
-let alfabetico = false
-let adulto = false
-
-
-function statusActive() {
+function statusUpdate() {
     status.innerHTML = '';
     let buscaString = '❌';
     let alfabeticoString = '❌';
     let adultoString = '❌';
-    if (busca) {
+    if (state.busca) {
         buscaString = '✅'
     }
-    if (alfabetico) {
+    if (state.ordemAZ) {
         alfabeticoString = '✅'
     }
-    if (adulto) {
+    if (state.adultos) {
         adultoString = '✅'
     }
     status.innerHTML = `
@@ -100,57 +102,86 @@ function statusActive() {
     </li>`
 }
 
+function toggleAdults(users) {
+    if (state.adultos) {
+        users = users.filter(({idade}) => idade >= 18)
+    }
+    return users
+}
+
+function togglesearch(users) {
+    state.busca = search.value.trim()
+    users = users.filter(({ name }) => {
+        return name.toLowerCase().includes(state.busca.toLowerCase())
+    })
+    return users
+}
+
+function toggleAlfabetico(users) {
+    if (state.ordemAZ) {
+        users = [...users].sort((a,b) => a.name.localeCompare(b.name))
+    } else {
+        users = [...users].sort((a,b) => b.name.localeCompare(a.name))
+    }
+    return users
+}
+
 function renderList() {
-    const searched = search.value.trim()
     total.innerHTML = ''
     cardList.innerHTML = ''
     let resultado = [...usuarios]
     
-    if (alfabetico === true) {
-        resultado = resultado .sort((a,b) => a.name.localeCompare(b.name))
-    } else {
-        resultado = resultado .sort((a,b) => b.name.localeCompare(a.name))
-    }
-    if (adulto === true) {
-        resultado = resultado.filter(({idade}) => idade >= 18)
-    }
+    resultado = toggleAlfabetico(resultado)
+    resultado = toggleAdults(resultado)
+    resultado = togglesearch(resultado)
     
-    resultado = resultado.filter(({ name }) => name.toLowerCase().includes(searched.toLowerCase()));
     if (resultado.length === 0) {
         cardList.innerHTML = '<h3>Nenhum usuario encontrado</h3>'
     } else {
         cardList.innerHTML = resultado.map(renderCards).join('')
     }
-
+    
     total.innerHTML = `Total: ${resultado.length} usuarios`
-    statusActive()
+    statusUpdate()
 }
 renderList()
 
 search.addEventListener('input', () => {
-    busca = true
+    if (state.busca.length === 0) {
+        state.busca = false
+    } else {
+        state.busca = true
+    }
     renderList()
 })
 
 buttonAlfabetizado.addEventListener('click', () => {
-    alfabetico = !alfabetico
-    if (alfabetico) {
+    state.ordemAZ = !state.ordemAZ
+    if (state.ordemAZ) {
         buttonAlfabetizado.innerHTML = `A-Z`
     } else {
         buttonAlfabetizado.innerHTML = `Z-A`
     }
-    statusActive()
+    statusUpdate()
     renderList()
 
 })
 
 buttonAdult.addEventListener('click', () => {
-    adulto = !adulto
-    if (adulto) {
+    state.adultos = !state.adultos
+    if (state.adultos) {
         buttonAdult.innerHTML = 'Remover filtro'
     } else {
         buttonAdult.innerHTML = 'Filtrar adultos'
     }
-    statusActive()
+    statusUpdate()
+    renderList()
+})
+
+buttonReset.addEventListener('click', () => {
+    state.ordemAZ = true //começaria false, mas usuarios já vem em ordem alfabetica
+    search.value = ''
+    state.busca = false
+    state.adultos = false
     renderList()
 })
