@@ -65,11 +65,10 @@ const state = {
     disponiveis: false
 }
 
-
 function renderCards(user) {
     if (!user.ativo) {
         return `
-            <li class='cardItem'>
+            <li class='cardItem inativo'>
             <h2>${user.name}</h2>
             <a>${user.idade} anos</a>
             <h4>${user.cargo}</h4>
@@ -79,7 +78,7 @@ function renderCards(user) {
             </li>`
     } else {
         return `
-            <li class='cardItem'>
+            <li class='cardItem ativo'>
             <h2>${user.name}</h2>
             <a>${user.idade} anos</a>
             <h4>${user.cargo}</h4>
@@ -219,6 +218,7 @@ buttonAlfabetizado.addEventListener('click', () => {
 })
 
 buttonAdult.addEventListener('click', () => {
+    buttonAdult.classList.toggle('active')
     state.adultos = !state.adultos
     if (state.adultos) {
         buttonAdult.innerHTML = 'Remover filtro adultos'

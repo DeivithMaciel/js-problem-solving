@@ -18,3 +18,38 @@ input {
     margin-bottom: 8px;
     text-align: center;
 }
+
+/* .offAdult {
+    background: gray;
+    color: white;
+} */
+
+button {
+    background: gray;
+    color: white;
+    border-radius: 4px;
+}
+
+.active {
+    background: green;
+    color: white;
+}
+
+ul {
+    list-style: none;
+}
+
+.cardItem {
+    padding: 16px;
+    text-align: center;
+}
+
+.ativo {
+    border: 3px solid green;
+    border-radius: 16px;
+}
+
+.inativo {
+    border: 2px solid red;
+    border-radius: 16px;
+}
