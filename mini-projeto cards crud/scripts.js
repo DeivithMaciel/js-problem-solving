@@ -71,6 +71,8 @@ const state = {
     disponiveis: false
 }
 
+let editandoId = null
+
 function saveUsers() {  //LOCAL STORAGE
     localStorage.setItem('usuarios', JSON.stringify(usuarios))
 }
@@ -92,6 +94,7 @@ function renderCards(user) {
             <h4>${user.cidade}</h4>
             <p>Disponivel:❌</p><button class='buttonNotActive' onclick='toggleActive(${user.id})'>Disponibilizar</button>
             <button onclick='removeUser(${user.id})'>Remover</button>
+            <div><button onclick='editUser(${user.id})'>Editar</button></div>
             </li>`
         } else {
             return `
@@ -102,6 +105,7 @@ function renderCards(user) {
             <h4>${user.cidade}</h4>
             <p>Disponivel:❌</p><button class='buttonNotActive' onclick='toggleActive(${user.id})'>Disponibilizar</button>
             <button onclick='removeUser(${user.id})'>Remover</button>
+            <div><button onclick='editUser(${user.id})'>Editar</button></div>
             </li>`
         }
     } else {
@@ -114,6 +118,7 @@ function renderCards(user) {
             <h4>${user.cidade}</h4>
             <p>Disponivel:✅</p><button class='buttonActive' onclick='toggleActive(${user.id})'>Indisponibilizar</button>
             <button onclick='removeUser(${user.id})'>Remover</button>
+            <div><button onclick='editUser(${user.id})'>Editar</button></div>
             </li>`
         } else {
             return `
@@ -124,6 +129,7 @@ function renderCards(user) {
             <h4>${user.cidade}</h4>
             <p>Disponivel:✅</p><button class='buttonActive' onclick='toggleActive(${user.id})'>Indisponibilizar</button>
             <button onclick='removeUser(${user.id})'>Remover</button>
+            <div><button onclick='editUser(${user.id})'>Editar</button></div>
             </li>`
         }
     }
@@ -216,6 +222,26 @@ function renderList() {
 renderList()
 
 function addUser() {
+    if (editandoId !== null) {
+        const usuario = usuarios.find((user) => user.id === editandoId)
+
+        usuario.name = nome.value
+        usuario.idade = anos.value
+        usuario.cargo = cargo.value
+        usuario.cidade = cidade.value
+
+        nome.value = ''
+        anos.value = ''
+        cargo.value = ''
+        cidade.value = ''
+
+        saveUsers()
+        renderList()
+
+        editandoId = null
+        return
+    }
+
     const newUser = {
         id: usuarios.length + 1,
         name: nome.value.trim(),
@@ -233,6 +259,11 @@ function addUser() {
             message.innerHTML = ''
         }, 3000)
 
+        nome.value = ''
+        anos.value = ''
+        cargo.value = ''
+        cidade.value = ''
+
         saveUsers()
         renderList()
     }
@@ -242,6 +273,17 @@ function removeUser(id) {
     usuarios = usuarios.filter((user) => user.id != id)
     saveUsers()
     renderList()
+}
+
+function editUser(id) {
+    usuario = usuarios.find(user => user.id === id)
+
+    nome.value = usuario.name
+    anos.value = usuario.idade
+    cargo.value = usuario.cargo
+    cidade.value = usuario.cidade
+
+    editandoId = id
 }
 
 search.addEventListener('input', () => {
