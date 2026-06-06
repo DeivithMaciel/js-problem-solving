@@ -1,11 +1,26 @@
-#cardList {
-    display: flex;
-    gap: 120px;
+.dark,
+.dark input,
+.dark button {
+    background: #222;
+    color: white;
+}
+
+.dark input{
+    border: 1px solid #fff;
+}
+
+.dark button {
+    border-radius: 4px;
 }
 
 .hero {
     display: flex;
 
+}
+
+#cardList {
+    display: flex;
+    gap: 120px;
 }
 
 .form {
@@ -14,9 +29,11 @@
     padding-left: 24px;
 }
 
-input {
+input,
+.dark input {
     margin-bottom: 8px;
     text-align: center;
+    border-radius: 4px;
 }
 
 /* .offAdult {
@@ -31,7 +48,7 @@ button {
 }
 
 .active {
-    background: green;
+    background: green !important;
     color: white;
 }
 
@@ -42,14 +59,37 @@ ul {
 .cardItem {
     padding: 16px;
     text-align: center;
+    color: black;
+}
+
+.compacto {
+    padding: 8px;
 }
 
 .ativo {
+    background-color: #d2ffce;
     border: 3px solid green;
     border-radius: 16px;
 }
 
 .inativo {
+    background-color: #faa6a6;
     border: 2px solid red;
     border-radius: 16px;
+}
+
+.adulto {
+    border-left: 6px solid green;
+}
+
+.menor {
+    border-left: 6px solid red;
+}
+
+.hidden {
+    display: none !important;
+}
+
+#message {
+    font-size: 24px;
 }

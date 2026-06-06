@@ -58,6 +58,12 @@ const cargo = document.querySelector('#cargo');
 const cidade = document.querySelector('#cidade');
 const buttonAdd = document.querySelector('#buttonAdd');
 
+const toggleCards = document.querySelector('#toggleCards');
+const buttonDark = document.querySelector('#buttonDark');
+const buttonCompact = document.querySelector('#buttonCompact');
+
+const message = document.querySelector('#message');
+
 const state = {
     busca: '',
     adultos: false,
@@ -65,27 +71,61 @@ const state = {
     disponiveis: false
 }
 
+function saveUsers() {  //LOCAL STORAGE
+    localStorage.setItem('usuarios', JSON.stringify(usuarios))
+}
+
+const usuariosSalvos = localStorage.getItem('usuarios')
+
+if (usuariosSalvos) {
+    usuarios = JSON.parse(usuariosSalvos)
+}
+
 function renderCards(user) {
     if (!user.ativo) {
-        return `
-            <li class='cardItem inativo'>
+        if (user.idade >= 18) {
+            return `
+            <li class='cardItem inativo'> 
             <h2>${user.name}</h2>
-            <a>${user.idade} anos</a>
+            <a class='card adulto'>${user.idade} anos</a>
             <h4>${user.cargo}</h4>
             <h4>${user.cidade}</h4>
-            <p>Disponivel:❌</p><button onclick='toggleActive(${user.id})'>Ativar/Desativar</button>
+            <p>Disponivel:❌</p><button class='buttonNotActive' onclick='toggleActive(${user.id})'>Disponibilizar</button>
             <button onclick='removeUser(${user.id})'>Remover</button>
             </li>`
+        } else {
+            return `
+            <li class='cardItem inativo'> 
+            <h2>${user.name}</h2>
+            <a class='card menor'>${user.idade} anos</a>
+            <h4>${user.cargo}</h4>
+            <h4>${user.cidade}</h4>
+            <p>Disponivel:❌</p><button class='buttonNotActive' onclick='toggleActive(${user.id})'>Disponibilizar</button>
+            <button onclick='removeUser(${user.id})'>Remover</button>
+            </li>`
+        }
     } else {
-        return `
-            <li class='cardItem ativo'>
+        if (user.idade >= 18) {
+            return `
+            <li class='cardItem ativo'> 
             <h2>${user.name}</h2>
-            <a>${user.idade} anos</a>
+            <a class='card adulto'>${user.idade} anos</a>
             <h4>${user.cargo}</h4>
             <h4>${user.cidade}</h4>
-            <p>Disponivel:✅</p><button onclick='toggleActive(${user.id})'>Ativar/Desativar</button>
+            <p>Disponivel:✅</p><button class='buttonActive' onclick='toggleActive(${user.id})'>Indisponibilizar</button>
             <button onclick='removeUser(${user.id})'>Remover</button>
             </li>`
+        } else {
+            return `
+            <li class='cardItem ativo'> 
+            <h2>${user.name}</h2>
+            <a class='card menor'>${user.idade} anos</a>
+            <h4>${user.cargo}</h4>
+            <h4>${user.cidade}</h4>
+            <p>Disponivel:✅</p><button class='buttonActive' onclick='toggleActive(${user.id})'>Indisponibilizar</button>
+            <button onclick='removeUser(${user.id})'>Remover</button>
+            </li>`
+        }
     }
 }
 
@@ -119,6 +159,7 @@ function statusUpdate() {
 function toggleActive(id) {
     const usuario = usuarios.find((user) => user.id === id)
     usuario.ativo = !usuario.ativo
+    saveUsers()
     renderList()
 }
 
@@ -187,12 +228,19 @@ function addUser() {
         alert('Preencha todos os campos')
     }  else {
         usuarios.push(newUser)
+        message.innerHTML = `O ususario: ${newUser.name} foi adicionado`
+        setTimeout(() => {
+            message.innerHTML = ''
+        }, 3000)
+
+        saveUsers()
         renderList()
     }
 }
 
 function removeUser(id) {
     usuarios = usuarios.filter((user) => user.id != id)
+    saveUsers()
     renderList()
 }
 
@@ -219,12 +267,13 @@ buttonAlfabetizado.addEventListener('click', () => {
 
 buttonAdult.addEventListener('click', () => {
     buttonAdult.classList.toggle('active')
-    state.adultos = !state.adultos
-    if (state.adultos) {
-        buttonAdult.innerHTML = 'Remover filtro adultos'
+    if (buttonAdult.classList.contains('active')) {
+        buttonAdult.innerHTML = 'Filtro adultos On'
+        
     } else {
-        buttonAdult.innerHTML = 'Filtrar adultos'
+        buttonAdult.innerHTML = 'Filtro adultos Off'
     }
+    state.adultos = !state.adultos
     statusUpdate()
     renderList()
 })
@@ -249,4 +298,34 @@ buttonDisponiveis.addEventListener('click', () => {
     }
     statusUpdate()
     renderList()
+})
+
+toggleCards.addEventListener('click', () => {
+    cardList.classList.toggle('hidden')
+    if (cardList.classList.contains('hidden')) {
+        toggleCards.innerHTML = 'Mostrar lista'
+    } else {
+        toggleCards.innerHTML = 'Ocultar lista'
+    }
+})
+
+buttonDark.addEventListener('click' , () => {
+    document.body.classList.toggle('dark')
+    if (document.body.classList.contains('dark')) {
+        buttonDark.innerHTML = '☀️ Light Mode'
+    } else {
+        buttonDark.innerHTML = '🌙 Dark Mode'
+    }
+})
+
+buttonCompact.addEventListener('click', () => {
+    const cardItem = document.querySelectorAll('.cardItem')
+    cardItem.forEach((card) => {
+        card.classList.toggle('compacto')
+        if (card.classList.contains('compacto')) {
+            buttonCompact.innerHTML = 'Descompactar Lista'
+        } else {
+            buttonCompact.innerHTML = 'Compactar Lista'
+        }
+    })
 })
