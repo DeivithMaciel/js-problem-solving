@@ -19,8 +19,9 @@
 }
 
 #cardList {
-    display: flex;
-    gap: 120px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 24px;
 }
 
 .form {
@@ -36,15 +37,18 @@ input,
     border-radius: 4px;
 }
 
-/* .offAdult {
-    background: gray;
-    color: white;
-} */
-
 button {
     background: gray;
     color: white;
     border-radius: 4px;
+    padding: 4px 8px;
+    margin-bottom: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    /* filter: brightness(1.2); */
+    opacity: 0.8;
 }
 
 .active {
@@ -60,6 +64,16 @@ ul {
     padding: 16px;
     text-align: center;
     color: black;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transition: 0.3s;
+}
+
+.cardItem:hover {
+    transform: translateY(-4px);
+}
+
+.dark .cardItem {
+    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.3);
 }
 
 .compacto {

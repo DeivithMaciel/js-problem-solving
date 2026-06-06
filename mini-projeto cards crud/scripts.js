@@ -235,6 +235,11 @@ function addUser() {
         cargo.value = ''
         cidade.value = ''
 
+            message.innerHTML = `O usuario: ${usuario.name} foi editado`
+            setTimeout(() => {
+                message.innerHTML = ''
+            }, 3000)
+
         saveUsers()
         renderList()
 
@@ -270,7 +275,12 @@ function addUser() {
 }
 
 function removeUser(id) {
+    const usuarioRemovido = usuarios.find(user => user.id === id)
     usuarios = usuarios.filter((user) => user.id != id)
+    message.innerHTML = `O usuario: ${usuarioRemovido.name} foi removido`
+    setTimeout(() => {
+        message.innerHTML = ''
+    }, 3000)
     saveUsers()
     renderList()
 }
@@ -326,6 +336,10 @@ buttonReset.addEventListener('click', () => {
     state.busca = false
     state.adultos = false
     state.disponiveis = false
+    buttonAdult.classList.remove('active')
+    buttonAdult.innerHTML = 'Filtro adultos Off'
+    buttonDisponiveis.innerHTML = 'Ativar só ativos'
+    buttonAlfabetizado.innerHTML = 'A-Z'
     renderList()
 })
 
